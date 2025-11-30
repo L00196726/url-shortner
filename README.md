@@ -10,6 +10,15 @@ This repo requires:
 ## Build Steps
 Run `./scripts/build.sh`
 
+## Deploy steps
+Run `.scripts/deploy.sh`
+
+### Destroy manually
+To destroy this instance, you will need to run:
+* `cd infra/terraform`
+* `terraform init`
+* `terraform destroy`
+
 ## Running locally
 * Create a virtual environment
 ```
