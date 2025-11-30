@@ -29,3 +29,12 @@ def test_redirect_success(client):
     # Flask converts redirect target URL
     assert response.status_code == 302
     assert response.location == "https://www.atu.ie"
+
+# Test: /health - success
+def test_health_success(client):
+    response = client.get("/health")
+
+    assert response.status_code == 200
+    data = response.get_json()
+
+    assert data["status"] == "ok"
