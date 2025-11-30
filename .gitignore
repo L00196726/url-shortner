@@ -44,8 +44,10 @@ __pycache__/
 
 # Virtual environments
 venv/
+.venv/
 .env/
 .pytest_cache/
 
 # Temporary files
 *.BKP
+.coverage
