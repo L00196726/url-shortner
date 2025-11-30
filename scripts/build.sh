@@ -18,7 +18,8 @@ pip install -r tests/requirements-test.txt
 pytest -v --cov=app --cov-report=term --cov-fail-under=$COVERAGE_THRESHOLD
 
 echo "Building Docker image..."
-docker build -t ${IMAGE_NAME}:${TAG} -t ${IMAGE_NAME}:latest .
+docker buildx create --use
+docker buildx build --platform linux/amd64,linux/arm64 -t ${IMAGE_NAME}:${TAG} -t ${IMAGE_NAME}:latest --push .
 
 echo "Build complete: ${IMAGE_NAME}:${TAG}"
 
