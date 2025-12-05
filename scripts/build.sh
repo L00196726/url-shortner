@@ -21,8 +21,4 @@ echo "Building Docker image..."
 docker buildx create --use
 docker buildx build --platform linux/amd64,linux/arm64 -t ${IMAGE_NAME}:${TAG} -t ${IMAGE_NAME}:latest --push .
 
-echo "Build complete: ${IMAGE_NAME}:${TAG}"
-
-echo "Pushing to Docker Hub..."
-docker push ${IMAGE_NAME}:${TAG}
-docker push ${IMAGE_NAME}:latest
+echo "Build complete and pushed to Docker: ${IMAGE_NAME}:${TAG}"
