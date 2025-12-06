@@ -72,10 +72,14 @@ resource "aws_instance" "url_shortener" {
               # Stop any previous container
               docker rm -f url-shortener || true
 
+              # Get public DNS
+              PUBLIC_DNS="$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)"
+
               # Run container on port 5000
               docker run -d \
                 --name url-shortener \
                 -p 5000:5000 \
+                -e BASE_URL="http://${PUBLIC_DNS}:5000" \
                 matheusmaximo/url-shortener:latest
               EOF
 
