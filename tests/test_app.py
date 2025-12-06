@@ -19,7 +19,7 @@ def test_shorten_success(client):
 
     assert response.status_code == 201
     data = response.get_json()
-    assert data["long_url"] == "long_url"
+    assert data["long_url"] == 'https://example.com'
     assert re.match(r"^http://localhost:5000/.+", data["short_url"])
     assert "code" in data
     assert "created_at" in data
