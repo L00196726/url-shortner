@@ -2,18 +2,21 @@ import os
 import uuid
 from datetime import datetime, timezone
 
-from flask import Flask, jsonify, redirect
+from flask import Flask, request, jsonify, redirect
 
 app = Flask(__name__)
 
 # API method to generate a short URL
 @app.route("/shorten", methods=["POST"])
 def shorten():
+    data = request.get_json(silent=True) or {}
+    long_url = data.get("url")
     code = str(uuid.uuid4())
+
     return jsonify({
         "code": code,
         "short_url": os.environ.get("BASE_URL", "http://localhost:5000/") + code,
-        "long_url": "long_url",
+        "long_url": long_url,
         "created_at": datetime.now(timezone.utc).isoformat() + "Z"
     }), 201
 
