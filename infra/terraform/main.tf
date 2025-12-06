@@ -65,22 +65,6 @@ resource "aws_instance" "url_shortener" {
 
               # Add ec2-user to docker group
               usermod -aG docker ec2-user
-
-              # Pull the latest url-shortener
-              docker pull matheusmaximo/url-shortener:latest
-
-              # Stop any previous container
-              docker rm -f url-shortener || true
-
-              # Get public DNS
-              PUBLIC_DNS="$(curl -s http://169.254.169.254/latest/meta-data/public-hostname)"
-
-              # Run container on port 5000
-              docker run -d \
-                --name url-shortener \
-                -p 5000:5000 \
-                -e BASE_URL="http://${PUBLIC_DNS}:5000" \
-                matheusmaximo/url-shortener:latest
               EOF
 
   tags = {
@@ -93,7 +77,7 @@ output "instance_public_ip" {
   value       = aws_instance.url_shortener.public_ip
 }
 
-output "app_url" {
-  description = "URL to access the url-shortener app"
-  value       = "http://${aws_instance.url_shortener.public_dns}:5000/health"
+output "instance_public_dns" {
+  description = "Public DNS of the EC2 instance"
+  value       = aws_instance.url_shortener.public_dns
 }

@@ -21,12 +21,24 @@ echo "Terraform apply..."
 terraform apply -auto-approve tfplan
 
 PUBLIC_IP=$(terraform output -raw instance_public_ip)
-HEALTH_URL="http://${PUBLIC_IP}:5000/health"
+
+PUBLIC_DNS=$(terraform output -raw instance_public_dns)
+
+echo "Docker run on instance ${PUBLIC_IP}..."
+ssh -o StrictHostKeyChecking=no -i $SSH_KEY $SSH_USER@${PUBLIC_IP} << EOF
+  docker pull matheusmaximo/url-shortener:latest
+  docker rm -f url-shortener || true
+  docker run -d \
+    --name url-shortener \
+    -p 5000:5000 \
+    -e BASE_URL="http://${PUBLIC_DNS}:5000" \
+    matheusmaximo/url-shortener:latest
+EOF
 
 echo
-
 echo "Waiting for instance to pass health check"
 
+HEALTH_URL="http://${PUBLIC_IP}:5000/health"
 # Retry loop
 SECONDS_WAITED=0
 until curl -s --max-time 2 "${HEALTH_URL}" | grep -q '"status":"ok"' ; do
