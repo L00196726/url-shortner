@@ -25,7 +25,7 @@ PUBLIC_IP=$(terraform output -raw instance_public_ip)
 PUBLIC_DNS=$(terraform output -raw instance_public_dns)
 
 echo "Docker run on instance ${PUBLIC_IP}..."
-ssh -o StrictHostKeyChecking=no -i $SSH_KEY $SSH_USER@${PUBLIC_IP} << EOF
+ssh -o StrictHostKeyChecking=no ec2-user@${PUBLIC_IP} << EOF
   docker pull matheusmaximo/url-shortener:latest
   docker rm -f url-shortener || true
   docker run -d \
