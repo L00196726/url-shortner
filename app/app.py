@@ -1,3 +1,4 @@
+import os
 import uuid
 from datetime import datetime, timezone
 
@@ -8,9 +9,10 @@ app = Flask(__name__)
 # API method to generate a short URL
 @app.route("/shorten", methods=["POST"])
 def shorten():
+    code = str(uuid.uuid4())
     return jsonify({
-        "code": str(uuid.uuid4()),
-        "short_url": "short_url",
+        "code": code,
+        "short_url": os.environ.get("BASE_URL", "http://localhost:5000/") + code,
         "long_url": "long_url",
         "created_at": datetime.now(timezone.utc).isoformat() + "Z"
     }), 201
