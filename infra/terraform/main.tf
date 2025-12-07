@@ -10,7 +10,7 @@ terraform {
 }
 
 provider "aws" {
-  region = "eu-west-1"
+  region = var.aws_region
 }
 
 # Security group to allow SSH and app port (5000)
@@ -45,7 +45,7 @@ resource "aws_security_group" "url_shortener_sg" {
 
 # EC2 instance with user_data installing Docker and running the container
 resource "aws_instance" "url_shortener" {
-  ami                    = "ami-0acd9fd39de089f9b" # Amazon Linux 2 AMI (eu-west-1)
+  ami                    = var.aws_ami_amzn_linux_eu_west_1
   instance_type          = "t3.micro"
   key_name               = "ATU"
   vpc_security_group_ids = [aws_security_group.url_shortener_sg.id]
@@ -70,14 +70,4 @@ resource "aws_instance" "url_shortener" {
   tags = {
     Name = "url-shortener-ec2"
   }
-}
-
-output "instance_public_ip" {
-  description = "Public IP of the EC2 instance"
-  value       = aws_instance.url_shortener.public_ip
-}
-
-output "instance_public_dns" {
-  description = "Public DNS of the EC2 instance"
-  value       = aws_instance.url_shortener.public_dns
 }
