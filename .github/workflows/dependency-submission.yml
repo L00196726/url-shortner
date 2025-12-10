@@ -1,0 +1,25 @@
+name: Submit Python Dependencies
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  submit:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Submit Python dependencies
+      uses: actions/dependency-submission-action@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        requirements-file: /app/requirements.txt
+
+    - name: Submit Python dependencies for Tests
+      uses: actions/dependency-submission-action@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        requirements-file: /tests/requirements-test.txt
