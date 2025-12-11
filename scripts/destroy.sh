@@ -18,4 +18,4 @@ echo "Terraform plan..."
 terraform plan -out=tfplan -input=false
 
 echo "Terraform destroy..."
-terraform destroy -auto-approve tfplan
+terraform destroy -auto-approve
