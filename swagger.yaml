@@ -1,0 +1,144 @@
+openapi: 3.0.3
+info:
+  title: URL Shortener API
+  version: 0.1.0
+  description: |
+    This application is designed to generate a shortened version of the URL.
+servers:
+  - url: http://localhost:5000
+    description: Local development server
+tags:
+  - name: URL Shortening
+    description: Operations for creating shortened URLs
+  - name: Redirect
+    description: Operations for resolving short codes
+  - name: Health
+    description: Application health endpoint
+paths:
+  /shorten:
+    post:
+      tags:
+        - URL Shortening
+      summary: Generate a shortened URL
+      description: |
+        Accepts a JSON payload containing a URL and returns a generated short
+        code together with the shortened URL.
+      operationId: shortenUrl
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ShortenRequest"
+            examples:
+              default:
+                summary: Shorten an URL
+                value:
+                  url: https://example.com
+      responses:
+        "201":
+          description: Short URL created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ShortenResponse"
+              examples:
+                default:
+                  summary: Successful short URL creation
+                  value:
+                    code: 123e4567-e89b-12d3-a456-426614174000
+                    short_url: http://localhost:5000/123e4567-e89b-12d3-a456-426614174000
+                    long_url: https://example.com
+                    created_at: "2026-04-06T12:00:00+00:00Z"
+  /{code}:
+    get:
+      tags:
+        - Redirect
+      summary: Redirect from a short code
+      description: |
+        Resolves a short code to its destination URL.
+      operationId: redirectFromCode
+      parameters:
+        - name: code
+          in: path
+          required: true
+          description: Short code contained in the shortened URL
+          schema:
+            type: string
+      responses:
+        "302":
+          description: Redirect to the destination URL
+          headers:
+            Location:
+              description: Destination URL for the redirect
+              schema:
+                type: string
+                format: uri
+                example: https://www.atu.ie
+  /health:
+    get:
+      tags:
+        - Health
+      summary: Health check
+      description: Returns the application health status.
+      operationId: getHealth
+      responses:
+        "200":
+          description: Application is healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthResponse"
+              examples:
+                default:
+                  summary: Healthy response
+                  value:
+                    status: ok
+components:
+  schemas:
+    ShortenRequest:
+      type: object
+      description: |
+        JSON payload for a URL shortening request.
+      properties:
+        url:
+          type: string
+          format: uri
+          description: Destination URL to be shortened
+      example:
+        url: https://example.com
+    ShortenResponse:
+      type: object
+      required:
+        - code
+        - short_url
+        - long_url
+        - created_at
+      properties:
+        code:
+          type: string
+          format: uuid
+          description: Generated UUID short code
+        short_url:
+          type: string
+          description: |
+            Generated short URL composed from the `BASE_URL` environment
+            variable, or `http://localhost:5000/` when not set.
+          example: http://localhost:5000/123e4567-e89b-12d3-a456-426614174000
+        long_url:
+          type: string
+          format: uri
+          description: Original URL submitted by the client
+          example: https://example.com
+        created_at:
+          type: string
+          description: UTC timestamp returned by the application at creation time
+          example: "2026-04-06T12:00:00+00:00Z"
+    HealthResponse:
+      type: object
+      required:
+        - status
+      properties:
+        status:
+          type: string
+          example: ok
